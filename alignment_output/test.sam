@@ -1,0 +1,4 @@
+@HD	VN:1.0	SO:unsorted
+@SQ	SN:chr1	LN:51
+@PG	ID:hisat2	PN:hisat2	VN:2.1.0	CL:"/hisat2.1/hisat2-align-l -x C:\Program Files\hisat2.1\fake_genome_index -U alignment_output\test.fastq -S alignment_output\test.sam"
+read1	0	chr1	1	60	51M	*	0	0	ATGCGTACGTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTA	IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:51	YT:Z:UU	NH:i:1
