@@ -53,4 +53,54 @@ uploaded_file = st.file_uploader("Upload FASTQ or FASTQ.GZ file",
 
 if uploaded_file is not None:
     st.success(f"File uploaded: {uploaded_file.name}")
-    
+    # Example: read first few lines
+    st.write("Preview of the file:")
+    try:
+        if uploaded_file.name.endswith(".gz"):
+            with gzip.open(uploaded_file, "rt") as f:
+                lines = [next(f) for _ in range(8)]
+        else:
+            lines = [next(uploaded_file) for _ in range(8)]
+            lines = [l.decode() for l in lines]  # convert bytes → string
+
+        st.code("".join(lines))
+    except Exception as e:
+        st.error(f"Error reading file: {e}")
+
+    # Save uploaded file to disk for FastQC processing
+    save_path = os.path.join("viewer_uploads", uploaded_file.name)
+    os.makedirs("viewer_uploads", exist_ok=True)
+    with open(save_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    st.success(f"File saved to {save_path}")
+    # Run FastQC
+    st.info("Running FastQC...")
+    try:
+        fastqc_dir = r"C:\\Program Files\\FastQC"
+        fastqc_path = os.path.join(fastqc_dir, "fastqc.bat")
+
+        save_path = os.path.abspath(save_path)
+        output_dir = os.path.abspath("viewer_uploads")
+        result = subprocess.run(
+            [
+                fastqc_path,
+                save_path,
+                "--outdir",
+                output_dir
+            ],
+            capture_output=True,
+            text=True,
+            cwd=fastqc_dir
+        )
+
+        #Display FastQC html report
+        html_report = glob.glob(os.path.join("viewer_uploads", "*.html"))[0]
+        with open(html_report, "r") as f:
+            html_content = f.read()
+        components.html(html_content, height=1000, scrolling=True)
+
+
+        st.success("FastQC completed successfully!")
+        st.write("FastQC output files are saved in the 'viewer_uploads' directory.")
+    except Exception as e:
+        st.error(f"Error running FastQC: {e}")
